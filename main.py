@@ -83,7 +83,12 @@ def proses_data(data):
     return judul, matkul, tanggal_waktu
 
 def main():
-    print("Opening browser...\n(Do not close it)\n")
+
+    print("Masukkan username dan password Emas2 Anda!")
+    username = input("Username: ")
+    password = input("Password: ")
+    
+    print("\nOpening browser...\n(Do not close it)\n")
 
     # URL halaman login
     url = 'https://emas2.ui.ac.id/my/'
@@ -97,12 +102,8 @@ def main():
     # Tunggu halaman login muncul
     time.sleep(3)
 
-    # Isi username dan password (ganti dengan username dan password Anda)
-    print("Masukkan username dan password Emas2 Anda!\n")
-    username = input("Username: ")
-    password = input("Password: ")
 
-    print("/nLogging in...")
+    print("\nLogging in...")
     # Cari elemen input username dan password, dan masukkan nilai
     driver.find_element(By.ID, 'username').send_keys(username)
     driver.find_element(By.ID, 'password').send_keys(password)
@@ -116,7 +117,7 @@ def main():
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'text-truncate')))
 
     # Mengecek jika login gagal
-    if driver.current_url != url_login:
+    if driver.current_url != url:
         print("Login failed!\n")
         print("Closing browser...")
         driver.quit()
