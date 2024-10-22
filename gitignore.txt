@@ -162,8 +162,8 @@ cython_debug/
 #.idea/
 
 # Credentials
-/credentials.json
-/testCalendar.py
-/testTanggal.py
-/token.pickle
-/tugas.csv
+credentials.json
+testCalendar.py
+testTanggal.py
+token.pickle
+tugas.csv
