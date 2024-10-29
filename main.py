@@ -15,6 +15,8 @@ import os.path
 import pickle
 import datetime 
 
+import maskpass
+
 # If modifying these SCOPES, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
@@ -55,7 +57,7 @@ def insertCalendar(service, task_summary, task_description, due_date, due_time):
             'time': due_time,
         },
         'status': 'confirmed',
-        'colorId': '6',  # Ganti dengan ID warna yang diinginkan
+        'colorId': '11',  # Ganti dengan ID warna yang diinginkan
     }
 
     # Memasukkan tugas ke kalender
@@ -86,7 +88,7 @@ def main():
 
     print("Masukkan username dan password Emas2 Anda!")
     username = input("Username: ")
-    password = input("Password: ")
+    password = maskpass.askpass(prompt="Password: ", mask="*")
     
     print("\nOpening browser...\n(Do not close it)\n")
 
@@ -107,23 +109,26 @@ def main():
     # Cari elemen input username dan password, dan masukkan nilai
     driver.find_element(By.ID, 'username').send_keys(username)
     driver.find_element(By.ID, 'password').send_keys(password)
-    print("Login successful!\n")
 
-    print("Collecting data...")
     # Klik tombol login (ganti selector sesuai dengan halaman web)
     driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-
-    # Tunggu sampai login berhasil dan halaman berikutnya dimuat
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'text-truncate')))
-
+    
+    time.sleep(10)
     # Mengecek jika login gagal
-    if driver.current_url != url:
+    if driver.current_url == "https://emas2.ui.ac.id/login/index.php":
         print("Login failed!\n")
         print("Closing browser...")
         driver.quit()
         print("Browser closed!\n")
         print("All done!")
         return
+    
+    print("Login successful!\n")
+
+    print("Collecting data...")
+
+    # Tunggu sampai login berhasil dan halaman berikutnya dimuat
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'text-truncate')))
 
     # Sekarang mulai scraping halaman setelah login berhasil
     soup = BeautifulSoup(driver.page_source, "html.parser")
@@ -134,17 +139,19 @@ def main():
     # Ambil data yang diinginkan
     for container in containers:
         try:
-            anchor = container.find('a', title=True)
+            anchors = container.findAll('a', title=True)
 
-            if anchor :
-                # judul_tugas = anchor.get('title', '').strip()
-                deskripsi = anchor.get('aria-label', '').strip() 
-                # tanggal = container.find('h5', attrs={'class': 'h6 mt-3 mb-0 '}).text  
-                # jam = container.find('small', attrs={'class': 'text-right text-nowrap pull-right'}).text  
-                
-                # Tambahkan data ke list
-                data.append((deskripsi))
-                time.sleep(1)
+            for anchor in anchors:
+                if anchor :
+                    # judul_tugas = anchor.get('title', '').strip()
+                    deskripsi = anchor.get('aria-label', '').strip() 
+                    # tanggal = container.find('h5', attrs={'class': 'h6 mt-3 mb-0 '}).text  
+                    # jam = container.find('small', attrs={'class': 'text-right text-nowrap pull-right'}).text  
+                    
+                    # Tambahkan data ke list
+                    if deskripsi != 'Add submission':
+                        data.append((deskripsi))
+                    time.sleep(1)
         except AttributeError:
             continue
     
