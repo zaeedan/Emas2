@@ -57,7 +57,7 @@ def insertCalendar(service, task_summary, task_description, due_date, due_time):
             'time': due_time,
         },
         'status': 'confirmed',
-        'colorId': '11',  # Ganti dengan ID warna yang diinginkan
+        'colorId': '8',  # Ganti dengan ID warna yang diinginkan
     }
 
     # Memasukkan tugas ke kalender
@@ -186,6 +186,9 @@ def main():
     print("Exporting data to Google Calendar...\n")
     
     for data1 in data:
+        if(data1 == '' or data1 == 'Answer the questions'):
+            continue
+
         judul, matkul, tanggal_waktu = proses_data(data1)
         print(f"Judul: {judul}")
         print(f"Nama Matkul: {matkul}")
